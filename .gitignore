@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# mcp konfiguráció – API kulcsokat tartalmazhat
+.mcp.json
+
+# claude code – helyi beállítások, memory fájlok
+.claude/
+
+# supabase cli – ideiglenes fájlok
+supabase/.temp/
