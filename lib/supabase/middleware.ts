@@ -1,13 +1,14 @@
-// Session frissítő helper — a proxy.ts (gyökér) importálja
-// MIÉRT: A Supabase auth token-t minden kérésnél frissíteni kell,
-// különben a session lejár. A getUser() hívás biztosítja ezt.
-// Laravel analógia: mint egy middleware ami minden kérésnél refresheli a session-t
+// Supabase session kezelő + route védelem helper
+// MIÉRT ide kerül a logika és nem a proxy.ts-be?
+// Single Responsibility Principle: a proxy.ts feladata csak az, hogy
+// meghívja ezt a függvényt. Az auth logika itt van egy helyen, könnyen tesztelhető.
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
+  // Supabase kliens létrehozása — cookie-alapú session kezelés
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -17,8 +18,8 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          // Cookie-t először a request-re írjuk, majd az új response-ra is
-          // Így mindkét irányban szinkronban marad a session
+          // Cookie szinkronizálás: request → response irányba
+          // Így a frissített token mindkét helyen érvényes lesz
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
@@ -31,9 +32,30 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // FONTOS: Ne írj semmit a createServerClient és az alábbi getUser() közé!
-  // A getUser() szerver-oldalon validálja a tokent — ez a session frissítés lényege
-  await supabase.auth.getUser()
+  // FONTOS: Ne írj kódot a createServerClient és a getUser() közé!
+  // getUser() validálja a tokent a Supabase szerveren — ez frissíti a sessiont
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  const { pathname } = request.nextUrl
+
+  // Nyilvános útvonalak — bejelentkezés nélkül is elérhetők
+  const isPublicRoute =
+    pathname === '/' ||
+    pathname.startsWith('/auth/')
+
+  // Nincs session + védett oldal → login oldalra irányítás
+  if (!user && !isPublicRoute) {
+    const loginUrl = new URL('/auth/login', request.url)
+    loginUrl.searchParams.set('next', pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  // Be van jelentkezve + auth oldalon van (kivéve callback) → dashboard
+  if (user && pathname.startsWith('/auth/') && !pathname.startsWith('/auth/callback')) {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
 
   return supabaseResponse
 }

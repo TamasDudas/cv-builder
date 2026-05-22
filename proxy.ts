@@ -1,16 +1,15 @@
-// Next.js 16 Proxy (korábbi neve: middleware) — minden kérésnél lefut
-// MIÉRT proxy.ts és nem middleware.ts: Next.js 16.0.0-tól a middleware.ts deprecated,
-// az új neve proxy.ts, a függvény neve proxy(). Ugyanaz a funkció, csak átnevezve.
-// Laravel analógia: mint a globális HTTP middleware (Kernel.php-ban regisztrált)
+// Next.js 16 Proxy — minden HTTP kérésnél lefut (korábbi neve: middleware)
+// MIÉRT proxy.ts: Next.js 16.0.0-tól middleware.ts helyett proxy.ts a konvenció,
+// a belépési függvény neve pedig proxy() lett.
+// Ez a fájl szándékosan minimalista — az összes logika a lib/supabase/middleware.ts-ben van.
 import { type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
 export async function proxy(request: NextRequest) {
-  return await updateSession(request)
+  return updateSession(request)
 }
 
-// A matcher megmondja, mely útvonalakon fusson le a proxy
-// Kizárjuk a statikus fájlokat és képeket a felesleges feldolgozás elkerülésére
+// Mely útvonalakon fusson a proxy — statikus fájlok és képek kizárva
 export const config = {
   matcher: [
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
