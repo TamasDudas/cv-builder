@@ -5,10 +5,11 @@
 // A szülő (page.tsx) Server Component, ez Client Component — így megmarad az SSR előny.
 
 import { useState, useCallback, useTransition } from 'react'
-import { CVData, PersonalInfo, ExperienceEntry } from '@/lib/types/cv'
+import { CVData, PersonalInfo, ExperienceEntry, CustomSection } from '@/lib/types/cv'
 import { CVPreview } from '@/components/preview/cv-preview'
 import { HeaderPanel } from '@/components/editor/panels/header-panel'
 import { ExperiencePanel } from '@/components/editor/panels/experience-panel'
+import { CustomSectionsPanel } from '@/components/editor/panels/custom-sections-panel'
 import { Button } from '@/components/ui/button'
 import { Save, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
@@ -16,7 +17,7 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
 // Az aktív szekció fül típusa
-type ActiveTab = 'header' | 'experience'
+type ActiveTab = 'header' | 'experience' | 'profile'
 
 interface CVEditorProps {
   cvId: string
@@ -47,6 +48,11 @@ export function CVEditor({ cvId, initialTitle, initialData }: CVEditorProps) {
     setCvData((prev) => ({ ...prev, experience: updated }))
   }, [])
 
+  // --- Szabad szekciók frissítése ---
+  const handleCustomSectionsChange = useCallback((updated: CustomSection[]) => {
+    setCvData((prev) => ({ ...prev, customSections: updated }))
+  }, [])
+
   // --- CV mentése Supabase-be ---
   async function handleSave() {
     startSaveTransition(async () => {
@@ -73,7 +79,8 @@ export function CVEditor({ cvId, initialTitle, initialData }: CVEditorProps) {
   // --- Fül definíciók ---
   const tabs: { id: ActiveTab; label: string }[] = [
     { id: 'header', label: 'Fejléc' },
-    { id: 'experience', label: 'Tapasztalat' },
+    { id: 'experience', label: 'Tapasztalat & Tanulmányok' },
+    { id: 'profile', label: 'Profil' },
   ]
 
   return (
@@ -159,6 +166,12 @@ export function CVEditor({ cvId, initialTitle, initialData }: CVEditorProps) {
                 onChange={handleExperienceChange}
               />
             )}
+            {activeTab === 'profile' && (
+              <CustomSectionsPanel
+                data={cvData.customSections}
+                onChange={handleCustomSectionsChange}
+              />
+            )}
           </div>
         </aside>
 
@@ -172,6 +185,7 @@ export function CVEditor({ cvId, initialTitle, initialData }: CVEditorProps) {
           <CVPreview
             personalInfo={cvData.personalInfo}
             experience={cvData.experience}
+            customSections={cvData.customSections}
           />
         </main>
       </div>

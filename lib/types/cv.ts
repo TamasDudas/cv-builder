@@ -14,18 +14,38 @@ export interface PersonalInfo {
 }
 
 // --- Tapasztalat egy bejegyzése ---
+// MIÉRT type mező: ugyanaz a struktúra kell munkahelynek és iskolának is,
+// csak a feliratok különböznek — így nem kell külön tömb az adatbázisban.
+// Régi bejegyzéseknél type hiányozhat → ?? 'work' fallback-kel kezeljük.
 export interface ExperienceEntry {
-  id: string          // egyedi azonosító (crypto.randomUUID)
-  company: string     // cég neve
-  position: string    // pozíció / munkakör
-  startDate: string   // pl. "2020-01"
-  endDate: string     // pl. "2023-06" — üres ha current = true
-  current: boolean    // jelenlegi munkahely?
-  location?: string   // pl. "Budapest"
+  id: string                        // egyedi azonosító (crypto.randomUUID)
+  type: 'work' | 'education'        // munkahely vagy iskola/tanulmány
+  company: string                   // cég neve (work) / intézmény neve (education)
+  position: string                  // pozíció (work) / szak, diploma (education)
+  startDate: string                 // pl. "2020-01"
+  endDate: string                   // pl. "2023-06" — üres ha current = true
+  current: boolean                  // jelenlegi munkahely / még itt tanul?
+  location?: string                 // pl. "Budapest"
   // Leírás: minden sor egy bullet point lesz a preview-ban
   // MIÉRT string és nem string[]: könnyebb textarea-ban szerkeszteni,
   // a preview-ban split('\n')-nel alakítjuk bullet pointokká
   description: string
+}
+
+// --- Szabad szekció egy eleme (pl. "Angol" → "C1") ---
+// MIÉRT value opcionális: hobbikhoz, jogosítványhoz elég csak a label
+export interface CustomItem {
+  id: string
+  label: string   // pl. "Angol", "B kategória", "Fotózás"
+  value?: string  // pl. "C1 – haladó", opcionális
+}
+
+// --- Szabad szekció (user nevezi el és tölti fel) ---
+// MIÉRT rugalmas: ki-ki azt ír be amit akar — nyelvtudás, hobbi, jogosítvány stb.
+export interface CustomSection {
+  id: string
+  title: string         // pl. "Nyelvtudás", "Hobbik", "Jogosítvány"
+  items: CustomItem[]
 }
 
 // --- Egy szekció (tapasztalat, végzettség, stb.) ---
@@ -51,6 +71,9 @@ export interface CVData {
   // Tapasztalatok külön tömbben — könnyebb kezelni mint CVSection content-ben
   // MIÉRT nem sections[].content: erősen típusos, TypeScript segít a szerkesztésnél
   experience: ExperienceEntry[]
+  // Szabad szekciók — user által definiált, tetszőleges tartalom
+  // MIÉRT külön tömb: rugalmas, nem kell séma migráció új szekció típushoz
+  customSections: CustomSection[]
 }
 
 // --- Egy CV rekord az adatbázisból ---
@@ -76,13 +99,35 @@ export const defaultCVData: CVData = {
   },
   sections: [],
   experience: [],
+  customSections: [],
+}
+
+// --- Üres szabad szekció (új hozzáadásakor) ---
+export function createEmptyCustomSection(): CustomSection {
+  return {
+    id: crypto.randomUUID(),
+    title: '',
+    items: [],
+  }
+}
+
+// --- Üres elem egy szabad szekción belül ---
+export function createEmptyCustomItem(): CustomItem {
+  return {
+    id: crypto.randomUUID(),
+    label: '',
+    value: '',
+  }
 }
 
 // --- Üres tapasztalat bejegyzés (új hozzáadásakor) ---
-export function createEmptyExperience(): ExperienceEntry {
+// MIÉRT type paraméter: a "Munkatapasztalat" és "Tanulmány" gombok
+// ugyanezt a függvényt hívják, csak más type-pal
+export function createEmptyExperience(type: 'work' | 'education' = 'work'): ExperienceEntry {
   return {
     // MIÉRT crypto.randomUUID: egyedi id kell a React key-hez és a törléshez
     id: crypto.randomUUID(),
+    type,
     company: '',
     position: '',
     startDate: '',
