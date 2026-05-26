@@ -66,7 +66,7 @@ return (
 .filter((line) => line.trim() !== '')
 .map((line, i) => (
 <li key={i} className="text-xs text-slate-600 flex items-start gap-2">
-<span className="text-slate-200 shrink-0 mt-0.5">•</span>
+<span className="text-slate-600 shrink-0 mt-0.5">•</span>
 <span>{line.trim()}</span>
 </li>
 ))}
