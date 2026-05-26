@@ -1,7 +1,8 @@
 // Supabase session kezelő + route védelem helper
-// MIÉRT ide kerül a logika és nem a proxy.ts-be?
-// Single Responsibility Principle: a proxy.ts feladata csak az, hogy
+// MIÉRT ide kerül a logika és nem a middleware.ts-be?
+// Single Responsibility Principle: a middleware.ts feladata csak az, hogy
 // meghívja ezt a függvényt. Az auth logika itt van egy helyen, könnyen tesztelhető.
+
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
@@ -40,7 +41,8 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // Nyilvános útvonalak — bejelentkezés nélkül is elérhetők
+  // 🔧 PROJEKT-SPECIFIKUS: nyilvános útvonalak listája
+  // Ezeket az útvonalakat bejelentkezés nélkül is el lehet érni
   const isPublicRoute =
     pathname === '/' ||
     pathname.startsWith('/auth/')
@@ -52,7 +54,8 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Be van jelentkezve + auth oldalon van (kivéve callback) → dashboard
+  // 🔧 PROJEKT-SPECIFIKUS: bejelentkezés utáni céloldal
+  // Be van jelentkezve + auth oldalon van (kivéve callback) → átirányítás
   if (user && pathname.startsWith('/auth/') && !pathname.startsWith('/auth/callback')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }

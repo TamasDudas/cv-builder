@@ -52,7 +52,6 @@ Ez egy oktatási projekt. Minden generált kód mellé:
 - Supabase browser client: @/lib/supabase/client
 - Minden TypeScript típus a /lib/types mappában
 - shadcn/ui komponensek: npx shadcn@latest add [component]
--
 
 ## Database tables
 
@@ -79,6 +78,7 @@ Ez egy oktatási projekt. Minden generált kód mellé:
 - Ahol input mező van, ott legyen magyar nyelvű validáció
 - Mobil barát megjelenés
 - Figyelni arra hogy minden eszközön és böngészőben megfelelő legyen a megjelenés (android, ios, firefox, crome, safari stb.)
+- Törlésnél mindig egy toast vagy sonner megjelnéssel a shadcn ui használatával kérdezzen rá egy ablakban, hogy biztos törölni akarja-e. Minden mentés vagy létrehozásnál, szintén jelezzünk a felhasználónak, hogy sikeres volt-e a művelet
 
 ## Deployment
 
