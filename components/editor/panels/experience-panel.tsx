@@ -77,7 +77,6 @@ const LABELS = {
 // ─────────────────────────────────────────────
 interface SortableEntryProps {
   entry: ExperienceEntry
-  index: number
   isOpen: boolean
   onToggle: () => void
   onDelete: (id: string) => void
@@ -456,7 +455,7 @@ export function ExperiencePanel({ data: rawData, onChange }: ExperiencePanelProp
         </div>
       ) : (
         <>
-          <p className="text-xs text-gray-400 -mb-2">
+          <p className="text-xs text-gray-400 mb-2">
             Húzd a <GripVertical className="size-3 inline" /> ikont a sorrend megváltoztatásához
           </p>
           <DndContext
@@ -469,11 +468,10 @@ export function ExperiencePanel({ data: rawData, onChange }: ExperiencePanelProp
               strategy={verticalListSortingStrategy}
             >
               <div className="space-y-2">
-                {data.map((entry, index) => (
+                {data.map((entry) => (
                   <SortableEntry
                     key={entry.id}
                     entry={entry}
-                    index={index}
                     isOpen={openId === entry.id}
                     onToggle={() => setOpenId(openId === entry.id ? null : entry.id)}
                     onDelete={handleDelete}

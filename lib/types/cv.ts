@@ -19,7 +19,7 @@ export interface PersonalInfo {
 // Régi bejegyzéseknél type hiányozhat → ?? 'work' fallback-kel kezeljük.
 export interface ExperienceEntry {
   id: string                        // egyedi azonosító (crypto.randomUUID)
-  type: 'work' | 'education'        // munkahely vagy iskola/tanulmány
+  type?: 'work' | 'education'       // munkahely vagy iskola/tanulmány (régi adatoknál hiányozhat)
   company: string                   // cég neve (work) / intézmény neve (education)
   position: string                  // pozíció (work) / szak, diploma (education)
   startDate: string                 // pl. "2020-01"

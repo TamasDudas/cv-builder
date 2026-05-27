@@ -74,9 +74,13 @@ function SortableSection({
     isDragging,
   } = useSortable({ id: section.id })
 
-  // Megerősítő dialog állapota
+  // Szekció törlés dialog állapota
   // MIÉRT lokális state: minden szekció saját dialogot kezel, nem kell felemelni
   const [deleteOpen, setDeleteOpen] = useState(false)
+
+  // Elem törlés dialog — melyik elem id-ja van törölve
+  // MIÉRT string | null: null = nincs nyitva, string = adott item id törlendő
+  const [deleteItemId, setDeleteItemId] = useState<string | null>(null)
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -175,10 +179,10 @@ function SortableSection({
                       onChange={(e) => onItemChange(section.id, item.id, 'value', e.target.value)}
                       className="text-sm flex-1 text-gray-500"
                     />
-                    {/* Elem törlése */}
+                    {/* Elem törlése — dialogot nyit, nem töröl azonnal */}
                     <button
                       className="p-1.5 rounded text-red-400 hover:text-red-600 hover:bg-red-50 shrink-0"
-                      onClick={() => onDeleteItem(section.id, item.id)}
+                      onClick={() => setDeleteItemId(item.id)}
                       title="Elem törlése"
                     >
                       <Trash2 className="size-3.5" />
@@ -204,7 +208,7 @@ function SortableSection({
       )}
     </div>
 
-    {/* Törlés megerősítő dialog — ugyanolyan mint a CV törlésénél */}
+    {/* Szekció törlés megerősítő dialog */}
     <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -221,6 +225,34 @@ function SortableSection({
           <AlertDialogCancel>Mégsem</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => { onDelete(section.id); setDeleteOpen(false) }}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            Törlés
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+
+    {/* Elem törlés megerősítő dialog — az adott elem label-jét mutatja */}
+    <AlertDialog open={deleteItemId !== null} onOpenChange={(open) => { if (!open) setDeleteItemId(null) }}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Biztosan törlöd?</AlertDialogTitle>
+          <AlertDialogDescription>
+            A{' '}
+            <span className="font-medium text-foreground">
+              „{section.items.find((i) => i.id === deleteItemId)?.label || 'Névtelen elem'}"
+            </span>{' '}
+            elem véglegesen törlődik. Ez a művelet nem vonható vissza.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Mégsem</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => {
+              if (deleteItemId) onDeleteItem(section.id, deleteItemId)
+              setDeleteItemId(null)
+            }}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             Törlés

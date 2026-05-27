@@ -191,7 +191,7 @@ Elérhetőség
 ))}
 </aside>
 
-{/* ===================== JOB OLDAL (fő tartalom) ===================== */}
+{/* ===================== JOBB OLDAL (fő tartalom) ===================== */}
 <main className="flex-1 flex flex-col min-w-0">
 {/* Fejléc: név + összefoglalás */}
 <header className="px-8 pt-8 pb-6 border-b border-gray-200">
