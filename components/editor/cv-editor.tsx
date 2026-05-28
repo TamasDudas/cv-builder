@@ -84,11 +84,11 @@ export function CVEditor({ cvId, initialTitle, initialData }: CVEditorProps) {
   ]
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-gray-50">
+    <div className="h-screen flex flex-col overflow-hidden bg-slate-100">
       {/* ====== NAVIGÁCIÓS SÁV ====== */}
-      <header className="h-14 border-b bg-white flex items-center px-4 gap-3 shrink-0 shadow-sm">
+      <header className="h-14 border-b bg-white/90 backdrop-blur-sm flex items-center px-4 gap-3 shrink-0 shadow-sm">
         <Link href="/dashboard">
-          <Button variant="ghost" size="sm" className="gap-1.5">
+          <Button variant="ghost" size="sm" className="gap-1.5 text-slate-600 hover:text-slate-900">
             <ArrowLeft className="size-4" />
             <span className="hidden sm:inline">Vissza</span>
           </Button>
@@ -99,7 +99,7 @@ export function CVEditor({ cvId, initialTitle, initialData }: CVEditorProps) {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="flex-1 text-sm font-medium bg-transparent outline-none focus:ring-1 focus:ring-primary/30 rounded px-2 py-1 min-w-0 text-gray-800 hover:bg-gray-50 cursor-text transition-colors"
+          className="flex-1 text-sm font-medium bg-transparent outline-none focus:ring-1 focus:ring-slate-400/40 rounded px-2 py-1 min-w-0 text-slate-800 hover:bg-slate-50 cursor-text transition-colors"
           placeholder="CV neve..."
           aria-label="CV neve"
         />
@@ -109,14 +109,19 @@ export function CVEditor({ cvId, initialTitle, initialData }: CVEditorProps) {
           <Button
             variant="outline"
             size="sm"
-            className="md:hidden"
+            className="md:hidden border-slate-300 text-slate-600 hover:text-slate-900"
             onClick={() => setShowPreview((v) => !v)}
           >
             {showPreview ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
           </Button>
 
-          {/* Mentés gomb */}
-          <Button size="sm" onClick={handleSave} disabled={isSaving} className="gap-1.5">
+          {/* Mentés gomb — slate gradiens */}
+          <Button
+            size="sm"
+            onClick={handleSave}
+            disabled={isSaving}
+            className="gap-1.5 bg-linear-to-r from-slate-800 to-slate-400 border-0 hover:opacity-90 transition-opacity"
+          >
             <Save className="size-4" />
             {isSaving ? 'Mentés...' : 'Mentés'}
           </Button>
@@ -129,13 +134,13 @@ export function CVEditor({ cvId, initialTitle, initialData }: CVEditorProps) {
         <aside
           className={`
             w-full md:w-100 lg:w-110
-            bg-white border-r overflow-y-auto shrink-0
+            bg-white border-r border-slate-200 overflow-y-auto shrink-0
             ${showPreview ? 'hidden md:block' : 'block'}
           `}
         >
           <div className="p-6">
             {/* Szekció fülek */}
-            <div className="flex gap-1 mb-6 p-1 bg-gray-100 rounded-lg">
+            <div className="flex gap-1 mb-6 p-1 bg-slate-100 rounded-lg">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
@@ -143,8 +148,8 @@ export function CVEditor({ cvId, initialTitle, initialData }: CVEditorProps) {
                   className={`
                     flex-1 text-xs font-medium py-1.5 px-3 rounded-md transition-all
                     ${activeTab === tab.id
-                      ? 'bg-white shadow-sm text-gray-800'
-                      : 'text-gray-500 hover:text-gray-700'
+                      ? 'bg-white shadow-sm text-slate-800'
+                      : 'text-slate-500 hover:text-slate-700'
                     }
                   `}
                 >
