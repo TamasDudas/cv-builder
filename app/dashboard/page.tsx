@@ -80,7 +80,7 @@ export default async function DashboardPage() {
     <div className="flex items-center justify-between mb-6">
      <div>
       {/* Üdvözlő cím — slate gradiens */}
-      <h1 className="text-2xl font-bold bg-linear-to-r from-slate-800 to-slate-400 bg-clip-text text-transparent">
+      <h1 className="text-2xl font-bold bg-linear-to-r from-sky-800 to-sky-500 bg-clip-text text-transparent">
        {fullName ? `Szia, ${fullName.split(' ')[1]}!` : 'Dashboard'}
       </h1>
       <p className="text-chart-3 text-sm mt-1">

@@ -103,7 +103,7 @@ export default function HomePage() {
          percek alatt
         </span>
         {/* Kiemelő vonal a szó alatt */}
-        <span className="absolute bottom-1 left-0 right-0 h-2 bg-slate-900/20 rounded" />
+        <span className="absolute bottom-1 left-0 right-0 h-2 bg-sky-600/40 rounded" />
        </span>
       </h1>
 
@@ -198,15 +198,15 @@ export default function HomePage() {
       {/* Lépések */}
       <div className="grid gap-8 sm:grid-cols-3 relative">
        {/* Összekötő vonal a lépések között (csak asztali nézeten) */}
-       <div className="hidden sm:block absolute top-8 left-1/6 right-1/6 h-px bg-slate-500" />
+       <div className="hidden sm:block absolute top-8 left-1/6 right-1/6 h-px bg-sky-500" />
 
        {steps.map(({ number, title, description }) => (
         <div key={number} className="relative text-center">
          {/* Lépésszám kör */}
-         <div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-full border-2 border-slate-400 bg-background text-xl font-bold relative z-10">
+         <div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-full border-2 border-sky-400 bg-background text-xl font-bold relative z-10">
           {number}
          </div>
-         <h3 className="font-semibold text-lg mb-2 bg-linear-to-r from-slate-800 to-slate-400 bg-clip-text text-transparent">
+         <h3 className="font-semibold text-lg mb-2 bg-linear-to-r from-sky-800 to-sky-500 bg-clip-text text-transparent">
           {title}
          </h3>
          <p className="text-sm chart-3 leading-relaxed max-w-xs mx-auto">
