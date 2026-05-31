@@ -9,23 +9,25 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
+// A Server Action visszatérési típusa — MIÉRT: useActionState megköveteli,
+// hogy az action state-et adjon vissza redirect() helyett, különben
+// "unexpected response" hibát dob Next.js-ben
+export type AuthActionState = {
+  error?: string
+  message?: string
+} | null
+
 // ---------- Bejelentkezés ----------
-// useActionState miatt az első paraméter a prevState (nem használjuk, de kell)
-export async function login(_prevState: null | void, formData: FormData) {
+export async function login(_prevState: AuthActionState, formData: FormData): Promise<AuthActionState> {
   const supabase = await createClient()
 
-  // FormData-ból kiolvassuk az értékeket
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
+  const { error } = await supabase.auth.signInWithPassword({ email, password })
 
   if (error) {
-    // Hibakódot query param-ként adjuk vissza — az oldal ebből jeleníti meg az üzenetet
-    redirect(`/auth/login?error=${encodeURIComponent(mapAuthError(error.message))}`)
+    return { error: mapAuthError(error.message) }
   }
 
   // Sikeres bejelentkezés után frissítjük a cache-t és átirányítunk
@@ -34,8 +36,7 @@ export async function login(_prevState: null | void, formData: FormData) {
 }
 
 // ---------- Regisztráció ----------
-// useActionState miatt az első paraméter a prevState (nem használjuk, de kell)
-export async function register(_prevState: null | void, formData: FormData) {
+export async function register(_prevState: AuthActionState, formData: FormData): Promise<AuthActionState> {
   const supabase = await createClient()
 
   const email = formData.get('email') as string
@@ -52,12 +53,12 @@ export async function register(_prevState: null | void, formData: FormData) {
   })
 
   if (error) {
-    redirect(`/auth/register?error=${encodeURIComponent(mapAuthError(error.message))}`)
+    return { error: mapAuthError(error.message) }
   }
 
-  // Ha az e-mail megerősítés be van kapcsolva Supabase-ben,
-  // erről tájékoztatjuk a felhasználót
-  redirect('/auth/login?message=Erősítsd+meg+az+e-mail+címedet+a+bejelentkezés+előtt.')
+  // MIÉRT return és nem redirect: useActionState-ben a redirect() hibát okoz,
+  // ezért state-ként adjuk vissza a sikerüzenetet, amit a form jelenít meg
+  return { message: 'Erősítsd meg az e-mail címedet a bejelentkezés előtt.' }
 }
 
 // ---------- Kijelentkezés ----------

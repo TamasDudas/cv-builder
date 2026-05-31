@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { login, register } from '@/app/auth/actions';
+import { login, register, type AuthActionState } from '@/app/auth/actions';
 import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 
 interface AuthFormProps {
@@ -18,19 +18,22 @@ interface AuthFormProps {
  message?: string;
 }
 
-export function AuthForm({ error, message }: AuthFormProps) {
+export function AuthForm({ error: initialError, message: initialMessage }: AuthFormProps) {
  const pathname = usePathname();
 
  // Az URL alapján döntjük el a módot — nincs szükség külön prop-ra
  const isRegister = pathname === '/auth/register';
 
- // useActionState: az aktuális módhoz tartozó Server Action-t kötjük be
- // MIÉRT: React 19 ajánlott módszer Server Action + form kezelésre,
- // isPending-gel ingyenes betöltési állapot
- const [, formAction, isPending] = useActionState(
+ // useActionState: az action state-ként adja vissza a hibát/üzenetet,
+ // MIÉRT: redirect() useActionState-ben hibát okoz, ezért state-et használunk
+ const [state, formAction, isPending] = useActionState<AuthActionState, FormData>(
   isRegister ? register : login,
   null,
  );
+
+ // Az URL-ből érkező vagy a Server Action által visszaadott hiba/üzenet
+ const error = state?.error ?? initialError;
+ const message = state?.message ?? initialMessage;
 
  return (
   <div className="space-y-4">
