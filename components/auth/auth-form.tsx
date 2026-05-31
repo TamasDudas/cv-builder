@@ -4,8 +4,8 @@
 // MIÉRT usePathname: Az URL alapján döntjük el, hogy regisztrációs
 // vagy bejelentkezési módban vagyunk-e. Így nincs duplikált kód,
 // és az egyetlen különbség (Teljes név mező) feltételesen jelenik meg.
-import { usePathname } from 'next/navigation';
-import { useActionState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useActionState, useEffect } from 'react';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,6 +20,7 @@ interface AuthFormProps {
 
 export function AuthForm({ error: initialError, message: initialMessage }: AuthFormProps) {
  const pathname = usePathname();
+ const router = useRouter();
 
  // Az URL alapján döntjük el a módot — nincs szükség külön prop-ra
  const isRegister = pathname === '/auth/register';
@@ -30,6 +31,14 @@ export function AuthForm({ error: initialError, message: initialMessage }: AuthF
   isRegister ? register : login,
   null,
  );
+
+ // MIÉRT useEffect: ha a regisztráció sikeres (state.message van), átirányítunk
+ // a login oldalra, ahol a message megjelenik — jobb UX mint inline üzenet
+ useEffect(() => {
+  if (state?.message) {
+   router.push(`/auth/login?message=${encodeURIComponent(state.message)}`);
+  }
+ }, [state?.message, router]);
 
  // Az URL-ből érkező vagy a Server Action által visszaadott hiba/üzenet
  const error = state?.error ?? initialError;
