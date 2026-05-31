@@ -46,10 +46,21 @@ export async function createCV() {
 export async function renameCV(id: string, title: string) {
   const supabase = await createClient()
 
+  // MIÉRT: Mindig ellenőrizzük a bejelentkezést és az id-t szerver oldalon,
+  // hogy se auth nélkül, se más user CV-jét ne lehessen módosítani.
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/auth/login')
+
+  if (!title.trim() || title.length > 255) {
+    throw new Error('Érvénytelen cím.')
+  }
+
+  // .eq('user_id', user.id) — explicit védelmi réteg az RLS mellett
   const { error } = await supabase
     .from('cvs')
-    .update({ title })
+    .update({ title: title.trim() })
     .eq('id', id)
+    .eq('user_id', user.id)
 
   if (error) throw new Error('Átnevezés sikertelen.')
 
@@ -60,7 +71,17 @@ export async function renameCV(id: string, title: string) {
 export async function deleteCV(id: string) {
   const supabase = await createClient()
 
-  const { error } = await supabase.from('cvs').delete().eq('id', id)
+  // MIÉRT: Mindig ellenőrizzük a bejelentkezést és az id-t szerver oldalon,
+  // hogy se auth nélkül, se más user CV-jét ne lehessen törölni.
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/auth/login')
+
+  // .eq('user_id', user.id) — explicit védelmi réteg az RLS mellett
+  const { error } = await supabase
+    .from('cvs')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id)
 
   if (error) throw new Error('Törlés sikertelen.')
 

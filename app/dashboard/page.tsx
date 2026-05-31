@@ -28,9 +28,12 @@ export default async function DashboardPage() {
  // CV-k lekérése az adatbázisból
  // MIÉRT szerver oldalon: az RLS policy csak a user saját CV-jeit adja vissza,
  // és nem kell client-side fetch — a szerver közvetlenül lekéri
+ // MIÉRT .eq('user_id', user.id): az RLS policy önmagában is szűr,
+ // de explicit feltétel nélkül egy jövőbeli konfigurációs hiba az összes CV-t visszaadhatná.
  const { data: cvs } = await supabase
   .from('cvs')
   .select('id, title, updated_at')
+  .eq('user_id', user.id)
   .order('updated_at', { ascending: false });
 
  return (

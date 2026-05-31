@@ -10,7 +10,12 @@ export async function GET(request: Request) {
 
   // A Supabase az auth code-ot és az opcionális next paramétert adja át
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/dashboard'
+  const nextParam = searchParams.get('next') ?? '/dashboard'
+
+  // MIÉRT: A "next" paramétert validálni kell, különben open redirect támadás lehetséges.
+  // Csak az alkalmazáson belüli (relatív) útvonalakat engedjük meg.
+  const isSafeRedirect = nextParam.startsWith('/') && !nextParam.startsWith('//')
+  const next = isSafeRedirect ? nextParam : '/dashboard'
 
   if (code) {
     const supabase = await createClient()
@@ -20,8 +25,8 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      // Sikeres bejelentkezés — átirányítás a dashboard-ra (vagy a "next" értékre)
-      return NextResponse.redirect(`${origin}${next}`)
+      // Sikeres bejelentkezés — átirányítás a dashboard-ra (vagy a validált "next" értékre)
+      return NextResponse.redirect(new URL(next, origin))
     }
   }
 

@@ -81,7 +81,8 @@ export function CVEditor({ cvId, initialTitle, initialData, initialTemplate }: C
 
    if (error) {
     toast.error('Mentés sikertelen. Próbáld újra!');
-    console.error(error);
+    // MIÉRT: Éles környezetben nem írjuk ki az adatbázis hibát a konzolra
+    if (process.env.NODE_ENV === 'development') console.error(error);
    } else {
     toast.success('CV elmentve!');
    }
