@@ -30,9 +30,11 @@ export function CVPreview({ personalInfo, experience, customSections, template }
 
   return (
     // Külső konténer: szürke háttér, görgethetű, A4 papír középre igazítva
-    <div className="h-full overflow-y-auto bg-gray-100 flex items-start justify-center p-6">
+    // overflow-x-auto: mobilon oldalra csúsztatható, ha a CV szélesebb a képernyőnél
+    <div className="h-full overflow-y-auto overflow-x-auto bg-gray-100 flex items-start justify-center p-6">
+      {/* min-w-150: mobilon nem nyomódik össze az A4-es lap, oldalra görgethetővé válik */}
       <div
-        className="bg-white shadow-lg w-full max-w-198.5 min-h-280.75 rounded-sm flex overflow-hidden"
+        className="bg-white shadow-lg w-full min-w-150 max-w-198.5 min-h-280.75 rounded-sm flex overflow-hidden"
         style={{ fontFamily: 'Georgia, serif' }}
       >
         {isEmpty ? (

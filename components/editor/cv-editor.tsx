@@ -210,6 +210,7 @@ export function CVEditor({ cvId, initialTitle, initialData, initialTemplate }: C
     </aside>
 
     {/* ---- JOBB PANEL: live CV preview ---- */}
+    {/* overflow-hidden marad asztalom, mobilon a CVPreview belső scrollja kezeli */}
     <main
      className={`
             flex-1 overflow-hidden

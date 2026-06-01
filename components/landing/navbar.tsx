@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/server';
+import MobileMenu from './mobile-menu';
 
 export default async function Navbar() {
  // Megnézzük, be van-e jelentkezve a felhasználó,
@@ -45,8 +46,8 @@ export default async function Navbar() {
      </a>
     </nav>
 
-    {/* Jobb oldali akció gombok */}
-    <div className="flex items-center gap-2">
+    {/* Jobb oldali akció gombok — csak nagyobb képernyőn */}
+    <div className="hidden md:flex items-center gap-2">
      {user ? (
       // Ha be van jelentkezve: Dashboard gomb
       <Link href="/dashboard">
@@ -76,6 +77,9 @@ export default async function Navbar() {
       </>
      )}
     </div>
+
+    {/* Mobil hamburger menü — csak kis képernyőn látható */}
+    <MobileMenu isLoggedIn={!!user} />
    </div>
   </header>
  );
