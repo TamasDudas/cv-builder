@@ -31,10 +31,13 @@ export function CVPreview({ personalInfo, experience, customSections, template }
   return (
     // Külső konténer: szürke háttér, görgethetű, A4 papír középre igazítva
     // overflow-x-auto: mobilon oldalra csúsztatható, ha a CV szélesebb a képernyőnél
-    <div className="h-full overflow-y-auto overflow-x-auto bg-gray-100 flex items-start justify-center p-6">
+    // MIÉRT nem justify-center: flex justify-center + overflow-x-auto esetén a bal oldal
+    // levágódik és nem görgethető vissza — mx-auto a gyereken ugyanúgy középre igazít
+    <div className="h-full overflow-y-auto overflow-x-auto bg-gray-100 p-6">
       {/* min-w-150: mobilon nem nyomódik össze az A4-es lap, oldalra görgethetővé válik */}
+      {/* mx-auto: középre igazítás justify-center helyett, hogy a bal él elérhető maradjon */}
       <div
-        className="bg-white shadow-lg w-full min-w-150 max-w-198.5 min-h-280.75 rounded-sm flex overflow-hidden"
+        className="bg-white shadow-lg mx-auto min-w-150 max-w-198.5 min-h-280.75 rounded-sm flex overflow-hidden"
         style={{ fontFamily: 'Georgia, serif' }}
       >
         {isEmpty ? (
