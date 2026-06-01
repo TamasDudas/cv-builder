@@ -37,11 +37,21 @@ export async function login(_prevState: AuthActionState, formData: FormData): Pr
 
 // ---------- Regisztráció ----------
 export async function register(_prevState: AuthActionState, formData: FormData): Promise<AuthActionState> {
+  // HONEYPOT ellenőrzés — ha a "website" mező ki van töltve, bot küldte a kérést
+  const honeypot = formData.get('website') as string
+  if (honeypot) {
+    // Szándékosan lassítjuk a választ, hogy ne lehessen enumálni a védelmet
+    await new Promise((r) => setTimeout(r, 2000))
+    return { error: 'Regisztráció sikertelen. Próbáld újra!' }
+  }
+
   const supabase = await createClient()
 
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const fullName = formData.get('fullName') as string
+  // Cloudflare Turnstile token — a widget automatikusan tölti ki ezt a mezőt
+  const captchaToken = formData.get('cf-turnstile-response') as string | undefined
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -49,6 +59,9 @@ export async function register(_prevState: AuthActionState, formData: FormData):
     options: {
       // Felhasználói metaadatok — a profiles táblába kerül trigger által
       data: { full_name: fullName },
+      // MIÉRT captchaToken: ha a Supabase Dashboard-on be van kapcsolva a CAPTCHA,
+      // a token nélküli regisztráció 400-as hibával visszautasításra kerül
+      ...(captchaToken ? { captchaToken } : {}),
     },
   })
 
