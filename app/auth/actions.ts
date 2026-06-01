@@ -100,6 +100,9 @@ function mapAuthError(message: string): string {
   if (message.includes('rate limit')) {
     return 'Túl sok próbálkozás. Kérjük, várj egy kicsit.'
   }
+  if (message.includes('captcha')) {
+    return 'Kérjük, igazold hogy nem vagy robot.'
+  }
   // Ismeretlen hiba esetén az eredeti üzenetet adjuk vissza
   return message
 }
