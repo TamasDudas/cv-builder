@@ -21,7 +21,7 @@ export default async function RegisterPage({
  const params = await searchParams;
 
  return (
-  <div className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
+  <div className="min-h-screen flex items-center justify-center bg-slate-100 p-6">
    <div className="w-full max-w-md space-y-6">
     {/* Logó és alkalmazásnév — slate gradiens stílus */}
     <div className="flex flex-col items-center gap-2 text-center">
