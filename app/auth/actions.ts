@@ -61,6 +61,12 @@ export async function register(_prevState: AuthActionState, formData: FormData):
   const fullName = formData.get('fullName') as string
   // Cloudflare Turnstile token — a widget automatikusan tölti ki ezt a mezőt
   const captchaToken = formData.get('cf-turnstile-response') as string | undefined
+  // MIÉRT server-side ellenőrzés: a required attribútum böngészőben megkerülhető,
+  // ezért a szerveren is ellenőrizzük, hogy az adatvédelmi nyilatkozatot elfogadták
+  const privacyAccepted = formData.get('privacyAccepted')
+  if (!privacyAccepted) {
+    return { error: 'Az adatvédelmi tájékoztató elfogadása kötelező a regisztrációhoz.' }
+  }
 
   const { error } = await supabase.auth.signUp({
     email,

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import CookieBanner from "@/components/cookie-banner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,6 +39,8 @@ export default function RootLayout({
         {children}
         {/* Sonner toast értesítők — az egész alkalmazásban elérhetők */}
         <Toaster richColors position="bottom-right" />
+        {/* Cookie tájékoztató sáv — egyszer jelenik meg, localStorage tárolja az állapotát */}
+        <CookieBanner />
       </body>
     </html>
   );

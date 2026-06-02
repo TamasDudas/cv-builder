@@ -261,6 +261,12 @@ export default function HomePage() {
      <p>© {new Date().getFullYear()} CV Builder </p>
      <div className="flex gap-4">
       <Link
+       href="/adatvedelem"
+       className="hover:text-foreground transition-colors"
+      >
+       Adatvédelem
+      </Link>
+      <Link
        href="/auth/login"
        className="hover:text-foreground transition-colors"
       >

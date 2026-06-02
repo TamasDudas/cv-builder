@@ -147,6 +147,32 @@ export function AuthForm({ error: initialError, message: initialMessage }: AuthF
      />
     )}
 
+    {/* Adatvédelmi checkbox — csak regisztrációnál jelenik meg
+        MIÉRT required: GDPR alapján kötelező az explicit hozzájárulás */}
+    {isRegister && (
+     <div className="flex items-start gap-2.5">
+      <input
+       id="privacyAccepted"
+       name="privacyAccepted"
+       type="checkbox"
+       required
+       disabled={isPending}
+       className="mt-0.5 size-4 shrink-0 cursor-pointer accent-slate-700"
+      />
+      <label htmlFor="privacyAccepted" className="text-sm text-muted-foreground leading-snug cursor-pointer">
+       Elolvastam és elfogadom az{' '}
+       <Link
+        href="/adatvedelem"
+        target="_blank"
+        className="font-medium text-foreground underline underline-offset-2 hover:opacity-70"
+       >
+        Adatvédelmi tájékoztatót
+       </Link>
+       .
+      </label>
+     </div>
+    )}
+
     <Button
      type="submit"
      className="w-full bg-linear-to-r from-slate-800 to-slate-400"
