@@ -258,7 +258,7 @@ export default function HomePage() {
       <FileText className="size-4" />
       CV Builder
      </div>
-     <p>© {new Date().getFullYear()} CV Builder — Tanulási projekt</p>
+     <p>© {new Date().getFullYear()} CV Builder </p>
      <div className="flex gap-4">
       <Link
        href="/auth/login"
