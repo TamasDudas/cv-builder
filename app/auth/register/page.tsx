@@ -31,7 +31,7 @@ export default async function RegisterPage({
         <FileText className="size-5" />
        </div>
        <span className="text-2xl font-bold bg-linear-to-r from-slate-800 to-slate-400 bg-clip-text text-transparent">
-        CV Builder
+        CV Builders
        </span>
       </div>
      </Link>

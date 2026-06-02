@@ -23,8 +23,17 @@ export async function login(_prevState: AuthActionState, formData: FormData): Pr
 
   const email = formData.get('email') as string
   const password = formData.get('password') as string
+  // MIÉRT captchaToken: a Supabase CAPTCHA védelem signInWithPassword-nél is kötelező,
+  // ha be van kapcsolva a Dashboard-on — token nélkül 400-as hibát ad vissza
+  const captchaToken = formData.get('cf-turnstile-response') as string | undefined
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+    options: {
+      ...(captchaToken ? { captchaToken } : {}),
+    },
+  })
 
   if (error) {
     return { error: mapAuthError(error.message) }
