@@ -114,7 +114,7 @@ export default function HomePage() {
       </p>
 
       {/* CTA gombok */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
        <Link href="/auth/register">
         <Button
          size="lg"
@@ -236,15 +236,17 @@ export default function HomePage() {
         Hozd létre az önéletrajzodat még ma — teljesen ingyenesen, regisztráció
         után azonnal.
        </p>
-       <Link href="/auth/register">
-        <Button
-         size="lg"
-         className="h-11 px-8 text-base gap-2 bg-linear-to-r from-slate-800 to-slate-400 border-0 hover:opacity-90 transition-opacity"
-        >
-         Ingyenes fiók létrehozása
-         <ArrowRight className="size-4" />
-        </Button>
-       </Link>
+       <div className="flex justify-center">
+        <Link href="/auth/register">
+         <Button
+          size="lg"
+          className="h-11 px-8 text-base gap-2 bg-linear-to-r from-slate-800 to-slate-400 border-0 hover:opacity-90 transition-opacity"
+         >
+          Ingyenes fiók létrehozása
+          <ArrowRight className="size-4" />
+         </Button>
+        </Link>
+       </div>
       </div>
      </div>
     </section>
