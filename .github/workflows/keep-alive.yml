@@ -2,15 +2,22 @@ name: Keep Supabase Alive
 
 on:
   schedule:
-    - cron: '0 9 */5 * *' # 5 naponta, reggel 9-kor fut
+    - cron: '0 9 * * 1,3,5' # Hétfőn, szerdán és pénteken fut reggel 9-kor (hetente 3x)
   workflow_dispatch: # kézi futtatás lehetősége a GitHub Actions felületéről
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase REST API
+      - name: Ping Supabase – profiles tábla lekérdezése
         run: |
-          curl -f "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/" \
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/profiles?select=id&limit=1" \
             -H "apikey: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}"
+            -H "Authorization: Bearer ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}")
+          echo "Supabase válasz: $STATUS"
+          if [ "$STATUS" -lt 200 ] || [ "$STATUS" -ge 300 ]; then
+            echo "Hiba: Supabase nem válaszol megfelelően (HTTP $STATUS)"
+            exit 1
+          fi
+          echo "Supabase aktív és elérhető."
